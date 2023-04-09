@@ -1,21 +1,25 @@
-import React from 'react'
-import more from '../img/more.png'
-import Input from './Input'
-import Messages from './Messages'
-const Chat = () => {
-  return (
-    <div className='chat'>
-      <div className='chatInfo'>
-        <span>Jane</span>
-        <div className='chatIcons'>
-          <img src={more} alt="" />
+import React, { useContext } from "react";
+import More from "../img/more.png";
+import Messages from "./Messages";
+import Input from "./Input";
+import { ChatContext } from "../context/ChatContext";
 
+const Chat = () => {
+  const { data } = useContext(ChatContext);
+
+  return (
+    <div className="chat">
+      <div className="chatInfo">
+        <span>{data.user?.displayName}</span>
+        <div className="chatIcons">
+          
+          <img src={More} alt="" />
         </div>
       </div>
-      <Messages/>
-      <Input></Input>
+      <Messages />
+      <Input/>
     </div>
-  )
-}
+  );
+};
 
-export default Chat
+export default Chat;

@@ -20,12 +20,13 @@ const Login = () => {
         navigate("/home")
       }
     } catch (err) {
-      setErr(true);
+      setErr(err.message);
     }
   };
 
   return (
     <div className='formContainer'>
+      
       <div className='formWrapper'>
         <span className='logo'>LiveChat</span>
         <span className='title'>Login</span>

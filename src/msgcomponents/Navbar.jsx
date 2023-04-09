@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { signOut, updateProfile } from 'firebase/auth';
-import { auth, storage } from '../firebase';
+import { auth, storage, db} from '../firebase';
+import {  doc, updateDoc } from "firebase/firestore";
 import { AuthContext } from '../context/AuthContext';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -31,14 +32,20 @@ const Navbar = () => {
 
   useEffect(() => {
     if (image) {
-      const imageRef = ref(storage, 'image');
+      const imageRef = ref(storage, `${currentUser.uid}/image`);
       uploadBytes(imageRef, image)
         .then(() => {
           getDownloadURL(imageRef)
             .then((url) => {
               setUrl(url);
-              updateProfile(currentUser, { photoURL: url })
-                .then(() => console.log('Profile photo updated!'))
+              updateProfile(auth.currentUser, { photoURL: url })
+                .then(() => {
+                  updateDoc(doc(db, "users", currentUser.uid), { photoURL: url })
+                    .then(() => {
+                      console.log("User photoURL updated successfully.");
+                    })
+                    .catch((error) => console.log(error.message));
+                })
                 .catch((error) => console.log(error.message));
             })
             .catch((error) => {
@@ -61,7 +68,7 @@ const Navbar = () => {
       <span className='logo'>Live Chat</span>
       <div className='user'>
         <img
-          src={url || currentUser.photoURL}
+          src={url ? url : currentUser.photoURL}
           alt=''
           onClick={handleImageClick}
           style={{ cursor: 'pointer' }}
@@ -81,4 +88,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
